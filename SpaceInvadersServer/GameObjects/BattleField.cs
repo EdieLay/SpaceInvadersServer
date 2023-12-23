@@ -14,6 +14,7 @@ namespace SpaceInvadersServer
         Enemies enemies;
         List<Bullet> enemyBullets;
         Bullet? playerBullet;
+        Player player;
 
         public BattleField()
         {
@@ -25,6 +26,16 @@ namespace SpaceInvadersServer
         public void Update() // тут происходит вся логика игры
         {
             enemies.Move();
+            for (int i = 0; i < enemyBullets.Count; i++)
+                enemyBullets.Move();
+            playerBullet.Move();
+            enemies.CalculateBulletCollision(playerBullet);
+            player.CalculateBulletsCollision(enemyBullets);
+        }
+
+        public void UpdatePlayer(/*params*/)
+        {
+            player.Move(/*params*/);
         }
     }
 }

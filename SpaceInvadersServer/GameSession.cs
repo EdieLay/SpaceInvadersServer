@@ -39,7 +39,7 @@ namespace SpaceInvadersServer
         {
             battleField.Update();
             byte[] message;
-
+            // отправка обновлённых данных клиенту через GameSocket
         }
     }
 }

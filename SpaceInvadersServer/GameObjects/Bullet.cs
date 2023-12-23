@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpaceInvadersServer.GameObjects
+namespace SpaceInvadersServer
 {
     internal class Bullet
     {
-        public const int WIDTH = 2;
-        public const int HEIGHT = 5;
+        const int _WIDTH = 2;
+        const int _HEIGHT = 5;
+        public int WIDTH { get => _WIDTH; }
+        public int HEIGHT { get => _HEIGHT; }
         readonly int SPEED;
         readonly bool IS_ENEMY;
         int x; // координаты левого верхнего угла пули
