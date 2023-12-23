@@ -8,16 +8,20 @@ namespace SpaceInvadersServer.GameObjects
 {
     internal class Bullet
     {
-        const int WIDTH = 2;
-        const int HEIGHT = 5;
+        public const int WIDTH = 2;
+        public const int HEIGHT = 5;
         readonly int SPEED;
-        int x;
+        readonly bool IS_ENEMY;
+        int x; // координаты левого верхнего угла пули
         int y;
+        public int X { get => x; }
+        public int Y { get => y; }
 
         public Bullet(int x, int y, bool isEnemy)
         {
             this.x = x;
             this.y = y;
+            IS_ENEMY = isEnemy;
             SPEED = isEnemy ? 15 : -15;
         }
     }

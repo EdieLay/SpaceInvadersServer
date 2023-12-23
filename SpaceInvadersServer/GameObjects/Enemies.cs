@@ -57,5 +57,32 @@ namespace SpaceInvadersServer.GameObjects
         {
             speed = (int)(243.0 / (enemiesAlive + 5.75));
         }
+
+        public void CalculateBulletCollision(Bullet bullet)
+        {
+            int bulX = bullet.X;
+            int bulY = bullet.Y;
+            if (bulY > GetDownBounder() || bulY < GetUpBounder() ||
+                bulX < GetLeftBounder() || bulX > GetRightBounder())
+                return;
+            // добавить проверку на столкновение
+        }
+
+        int GetDownBounder() // нижняя граница пацанов (т.е. самая низкая точка)
+        {
+            return offsetY + ROWS * HEIGHT + (ROWS - 1) * GAP_Y;
+        }
+        int GetUpBounder() // верхняя граница пацанов
+        {
+            return offsetY;
+        }
+        int GetLeftBounder()
+        {
+            return offsetX;
+        }
+        int GetRightBounder()
+        {
+            return offsetX + COLS * WIDTH + (COLS - 1) * GAP_X;
+        }
     }
 }
