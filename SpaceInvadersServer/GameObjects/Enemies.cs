@@ -14,17 +14,25 @@ namespace SpaceInvadersServer.GameObjects
         const int HEIGHT = 15; // высота пацана
         const int GAP_X = 3; // расстояние от правого конца пацана до следующего пацана
         const int GAP_Y = HEIGHT; // расстояние от нижнего конйа пацана до следующего пацана
+
         readonly int FIELD_WIDTH; // ширина поля
         readonly int FIELD_HEIGHT; // высота поля
+
         bool[] enemies; // массив пацанов: true - жив, false - мертв
         int enemiesAlive;
         int offsetX; // смещение левого верхнего угла каждого пацана относительно его начальной позиции по икс
         int offsetY; // смещение левого верхнего угла каждого пацана относительно его начальной позиции по игрек
         int speed; // скорость пацанов по икс за тик таймера
-        int downBorder;
-        int upBorder;
-        int leftBorder;
-        int rightBorder;
+
+        int downBorderNum; // номер нижней границы пацанов
+        int upBorderNum; // номер верхней
+        int leftBorderNum; // номер левой
+        int rightBorderNum; // номер правой
+
+        int downBorder; // координата y нижней границы
+        int upBorder; // координаты y верхней границы
+        int leftBorder; // координата x левой границы
+        int rightBorder; // координата x правой границы
 
         public Enemies(int fieldWidth, int fieldHeight)
         {
@@ -36,6 +44,10 @@ namespace SpaceInvadersServer.GameObjects
             CalculateSpeed();
             FIELD_WIDTH = fieldWidth;
             FIELD_HEIGHT = fieldHeight;
+            downBorderNum = ROWS - 1;
+            upBorderNum = 0;
+            leftBorderNum = 0;
+            rightBorderNum = COLS - 1;
             downBorder = ROWS * HEIGHT + (ROWS - 1) * GAP_Y;
             upBorder = 0;
             leftBorder = 0;
@@ -66,8 +78,10 @@ namespace SpaceInvadersServer.GameObjects
             speed = (int)(243.0 / (enemiesAlive + 5.75));
         }
 
-        public void CalculateBulletCollision(Bullet bullet)
+        public void CalculateBulletCollision(Bullet bullet) // добавить возврат счёта за попадание
         {
+            if (!bullet.IsAlive) return;
+
             int bulX = bullet.X;
             int bulY = bullet.Y;
             int bulWidth = bullet.WIDTH;
@@ -75,12 +89,80 @@ namespace SpaceInvadersServer.GameObjects
             if (bulY > downBorder || bulY + bulHeight < upBorder ||
                 bulX + bulWidth < leftBorder || bulX > rightBorder)
                 return;
-            // добавить проверку на столкновение
+
+            int x, y;
+            for (int i = upBorderNum; i <= downBorderNum; i++) 
+            {
+                for (int j = leftBorderNum; j <= rightBorderNum; j++)
+                {
+                    if (!enemies[i * COLS + j]) continue;
+                    x = j * (WIDTH + GAP_X);
+                    y = i * (HEIGHT + GAP_Y);
+                    if (x > bulX + bulWidth || x + WIDTH < bulX ||
+                        y > bulY + bulHeight || y + HEIGHT < bulY)
+                        continue;
+                    enemies[i * COLS + j] = false;
+                    enemiesAlive--;
+                    bullet.IsAlive = false;
+                    GetBorders();
+                    CalculateSpeed();
+                    return;
+                }
+            }
         }
 
-        void GetBorders()
+        void GetBorders() // возможно передавать сюда номер убитого чела, чтобы относительно его считать
         {
+            if (enemiesAlive == 0) return;
             // Высчитывание границ живых пацанов
+            int i = upBorderNum * COLS + leftBorderNum;
+            while (!enemies[i])
+            {
+                if (i % COLS == rightBorderNum)
+                {
+                    upBorderNum++;
+                    i = upBorderNum * COLS + leftBorderNum;
+                }
+                else i++;
+            }
+
+            i = downBorderNum * COLS + leftBorderNum;
+            while (!enemies[i])
+            {
+                if (i % COLS == rightBorderNum)
+                {
+                    downBorderNum--;
+                    i = downBorderNum * COLS + leftBorderNum;
+                }
+                else i++;
+            }
+
+            i = upBorderNum * COLS + leftBorderNum;
+            while (!enemies[i])
+            {
+                if (i / COLS == downBorderNum)
+                {
+                    leftBorderNum++;
+                    i = upBorderNum * COLS + leftBorderNum;
+                }
+                i += COLS;
+            }
+
+            i = upBorderNum * COLS + rightBorderNum;
+            while (!enemies[i])
+            {
+                if (i / COLS == downBorderNum)
+                {
+                    rightBorderNum--;
+                    i = upBorderNum * COLS + rightBorderNum;
+                }
+                i += COLS;
+            }
+
+            upBorder = upBorderNum * (HEIGHT + GAP_Y);
+            downBorder = downBorderNum * (HEIGHT + GAP_Y) + HEIGHT;
+            leftBorder = leftBorderNum * (WIDTH + GAP_X);
+            rightBorder = rightBorderNum * (WIDTH + GAP_X) + WIDTH;
         }
     }
 }

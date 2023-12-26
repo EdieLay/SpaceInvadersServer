@@ -15,12 +15,14 @@ namespace SpaceInvadersServer
         List<Bullet> enemyBullets;
         Bullet? playerBullet;
         Player player;
+        int score;
 
         public BattleField()
         {
             enemies = new Enemies(WIDTH, HEIGHT);
             enemyBullets = new List<Bullet>();
             playerBullet = null;
+            score = 0;
         }
 
         public void Update() // тут происходит вся логика игры
@@ -29,7 +31,7 @@ namespace SpaceInvadersServer
             for (int i = 0; i < enemyBullets.Count; i++)
                 enemyBullets.Move();
             playerBullet.Move();
-            enemies.CalculateBulletCollision(playerBullet);
+            score += enemies.CalculateBulletCollision(playerBullet);
             player.CalculateBulletsCollision(enemyBullets);
         }
 

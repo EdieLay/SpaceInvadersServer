@@ -14,6 +14,7 @@ namespace SpaceInvadersServer
         public int HEIGHT { get => _HEIGHT; }
         readonly int SPEED;
         readonly bool IS_ENEMY;
+        public bool IsAlive { get; set; }
         int x; // координаты левого верхнего угла пули
         int y;
         public int X { get => x; }
@@ -25,6 +26,7 @@ namespace SpaceInvadersServer
             this.y = y;
             IS_ENEMY = isEnemy;
             SPEED = isEnemy ? 15 : -15;
+            IsAlive = true;
         }
     }
 }
