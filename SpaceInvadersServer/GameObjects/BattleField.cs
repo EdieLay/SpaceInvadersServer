@@ -13,7 +13,7 @@ namespace SpaceInvadersServer
         const int HEIGHT = 800;
         Enemies enemies;
         List<Bullet> enemyBullets;
-        Bullet? playerBullet;
+        Bullet playerBullet;
         Player player;
         int score;
 
@@ -21,7 +21,7 @@ namespace SpaceInvadersServer
         {
             enemies = new Enemies(WIDTH, HEIGHT);
             enemyBullets = new List<Bullet>();
-            playerBullet = null;
+            playerBullet = new Bullet(0, 0, false, false);
             score = 0;
         }
 
@@ -29,8 +29,9 @@ namespace SpaceInvadersServer
         {
             enemies.Move();
             for (int i = 0; i < enemyBullets.Count; i++)
-                enemyBullets.Move();
+                enemyBullets[i].Move();
             playerBullet.Move();
+            // проверять, что зажата кнопка, и тогда => player.Move()
             score += enemies.CalculateBulletCollision(playerBullet);
             player.CalculateBulletsCollision(enemyBullets);
         }

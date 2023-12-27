@@ -8,11 +8,30 @@ namespace SpaceInvadersServer
 {
     internal class Player
     {
-        // TODO: узнать, как происходит зажатие клавиши в Windows Forms
-        // и придумать, как лучше передавать пакеты для передвижения игрока
-        public void Move(/*params*/)
+        const int WIDTH = 20;
+        const int HEIGHT = 15;
+        const int SPEED = 10;
+
+        readonly int Y;
+        readonly int FIELD_WIDTH; // ширина поля
+        readonly int FIELD_HEIGHT; // высота поля
+
+        int x;
+
+        public Player(int fieldWidth, int fieldHeight)
         {
-            // подвинуть на params
+            FIELD_WIDTH = fieldWidth; 
+            FIELD_HEIGHT = fieldHeight;
+            Y = FIELD_HEIGHT - 2 * HEIGHT;
+            x = FIELD_WIDTH / 2 - WIDTH / 2;
+        }
+
+        public void Move(bool toRight)
+        {
+            if (toRight)
+                x = x + SPEED > FIELD_WIDTH + WIDTH ? FIELD_WIDTH + WIDTH : x + SPEED;
+            else
+                x = x - SPEED < 0 ? 0 : x - SPEED;
         }
     }
 }

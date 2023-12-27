@@ -12,7 +12,7 @@ namespace SpaceInvadersServer
     internal class ServerSocket
     { 
         IPEndPoint endPoint { get; set; }
-        Socket socket { get; set; } = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        Socket socket { get; set; } = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 
         public ServerSocket(IPAddress ip)

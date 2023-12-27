@@ -20,13 +20,18 @@ namespace SpaceInvadersServer
         public int X { get => x; }
         public int Y { get => y; }
 
-        public Bullet(int x, int y, bool isEnemy)
+        public Bullet(int x, int y, bool isEnemy, bool isAlive = true)
         {
             this.x = x;
             this.y = y;
             IS_ENEMY = isEnemy;
             SPEED = isEnemy ? 15 : -15;
-            IsAlive = true;
+            IsAlive = isAlive;
+        }
+
+        public void Move()
+        {
+            x += SPEED;
         }
     }
 }

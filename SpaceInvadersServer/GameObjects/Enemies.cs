@@ -34,6 +34,8 @@ namespace SpaceInvadersServer.GameObjects
         int leftBorder; // координата x левой границы
         int rightBorder; // координата x правой границы
 
+        int wave; // текущая волна
+
         public Enemies(int fieldWidth, int fieldHeight)
         {
             enemies = new bool[ROWS * COLS]; // 5 строк по 11 пацанов
@@ -52,6 +54,7 @@ namespace SpaceInvadersServer.GameObjects
             upBorder = 0;
             leftBorder = 0;
             rightBorder = COLS * WIDTH + (COLS - 1) * GAP_X;
+            wave = 1;
         }
 
         public void Move()
@@ -75,12 +78,12 @@ namespace SpaceInvadersServer.GameObjects
         {
             // enemiesAlive = 55 => speed = 4
             // enemiesAlive = 1  => speed = 36
-            speed = (int)(243.0 / (enemiesAlive + 5.75));
+            speed = (int)((243.0 + (wave - 1.0) * 10) / (enemiesAlive + 5.75));
         }
 
-        public void CalculateBulletCollision(Bullet bullet) // добавить возврат счёта за попадание
+        public int CalculateBulletCollision(Bullet bullet)
         {
-            if (!bullet.IsAlive) return;
+            if (!bullet.IsAlive) return 0;
 
             int bulX = bullet.X;
             int bulY = bullet.Y;
@@ -88,7 +91,7 @@ namespace SpaceInvadersServer.GameObjects
             int bulHeight = bullet.HEIGHT;
             if (bulY > downBorder || bulY + bulHeight < upBorder ||
                 bulX + bulWidth < leftBorder || bulX > rightBorder)
-                return;
+                return 0;
 
             int x, y;
             for (int i = upBorderNum; i <= downBorderNum; i++) 
@@ -106,9 +109,15 @@ namespace SpaceInvadersServer.GameObjects
                     bullet.IsAlive = false;
                     GetBorders();
                     CalculateSpeed();
-                    return;
+                    if (enemiesAlive == 0)
+                    {
+                        StartNewWave();
+                        return wave - 1;
+                    }
+                    return wave;
                 }
             }
+            return 0;
         }
 
         void GetBorders() // возможно передавать сюда номер убитого чела, чтобы относительно его считать
@@ -163,6 +172,24 @@ namespace SpaceInvadersServer.GameObjects
             downBorder = downBorderNum * (HEIGHT + GAP_Y) + HEIGHT;
             leftBorder = leftBorderNum * (WIDTH + GAP_X);
             rightBorder = rightBorderNum * (WIDTH + GAP_X) + WIDTH;
+        }
+
+        void StartNewWave()
+        {
+            enemiesAlive = ROWS * COLS;
+            Array.Fill(enemies, true);
+            offsetX = 0;
+            offsetY = 0;
+            CalculateSpeed(); 
+            downBorderNum = ROWS - 1;
+            upBorderNum = 0;
+            leftBorderNum = 0;
+            rightBorderNum = COLS - 1;
+            downBorder = ROWS * HEIGHT + (ROWS - 1) * GAP_Y;
+            upBorder = 0;
+            leftBorder = 0;
+            rightBorder = COLS * WIDTH + (COLS - 1) * GAP_X;
+            wave++;
         }
     }
 }
