@@ -6,14 +6,8 @@ using System.Threading.Tasks;
 
 namespace SpaceInvadersServer
 {
-    internal class PacketManager
+    internal interface IPackable
     {
-
-        public PacketManager() { }
-
-        public byte[] MakeGameInfoPacket(Enemies enemies, )
-        {
-
-        }
+        byte[] GetInfo();
     }
 }

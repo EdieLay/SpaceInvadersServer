@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpaceInvadersServer.GameObjects
+namespace SpaceInvadersServer
 {
-    internal class Enemies
+    internal class Enemies : IPackable
     {
         const int ROWS = 5; // количество строк пацанов
         const int COLS = 11; // количество столбцов пацанов
@@ -50,10 +50,7 @@ namespace SpaceInvadersServer.GameObjects
             upBorderNum = 0;
             leftBorderNum = 0;
             rightBorderNum = COLS - 1;
-            downBorder = ROWS * HEIGHT + (ROWS - 1) * GAP_Y;
-            upBorder = 0;
-            leftBorder = 0;
-            rightBorder = COLS * WIDTH + (COLS - 1) * GAP_X;
+            GetBorders();
             wave = 1;
         }
 
@@ -78,7 +75,7 @@ namespace SpaceInvadersServer.GameObjects
         {
             // enemiesAlive = 55 => speed = 4
             // enemiesAlive = 1  => speed = 36
-            speed = (int)((243.0 + (wave - 1.0) * 10) / (enemiesAlive + 5.75));
+            speed = (int)((243.0 + (wave - 1.0) * 10) / (enemiesAlive + 5.75)) / 2;
         }
 
         public int CalculateBulletCollision(Bullet bullet)
@@ -190,6 +187,30 @@ namespace SpaceInvadersServer.GameObjects
             leftBorder = 0;
             rightBorder = COLS * WIDTH + (COLS - 1) * GAP_X;
             wave++;
+        }
+
+        public byte[] GetInfo()
+        {
+            byte[] message = new byte[13];
+            message[0] = (byte)(offsetX >> 8);
+            message[1] = (byte)(offsetX & 0xFF);
+            message[2] = (byte)(offsetY >> 8);
+            message[3] = (byte)(offsetY & 0xFF);
+            message[4] = (byte)(speed >> 8);
+            message[5] = (byte)(speed & 0xFF);
+            for (int i = 0; i < 7; i++)
+            {
+                byte alive = 0;
+                for (int j = 0; j < 8; j++)
+                {
+                    if (8 * i + j < ROWS * COLS)
+                        if (enemies[8 * i + j])
+                            alive |= 0b_0000_0001;
+                    alive = (byte)(alive << 1);
+                }
+                message[6 + i] = alive;
+            }
+            return message;
         }
     }
 }

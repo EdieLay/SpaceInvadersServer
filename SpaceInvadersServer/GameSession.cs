@@ -1,5 +1,4 @@
-﻿using SpaceInvadersServer.GameObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,23 +9,18 @@ namespace SpaceInvadersServer
 {
     internal class GameSession
     {
-        const int TIMER_INTERVAL_MS = 60;
-        GameSocket sck; // сокет для отправки и получения игровых данных
+        const int TIMER_INTERVAL_MS = 30;
+        GameSocket socket; // сокет для отправки и получения игровых данных
         PacketManager packetManager; // класс для конвертации отправляющихся и полученных данных
         BattleField battleField;
 
-        public GameSession(IPAddress ip)
+        public GameSession(IPAddress ip, int port)
         {
-            sck = new GameSocket(ip);
+            socket = new GameSocket(ip, port);
             packetManager = new PacketManager();
             battleField = new BattleField();
-        }
-
-
-        void Init()
-        {
-            // инициализация и запуск игрового процесса
-            throw new NotImplementedException();
+            Thread game = new(StartGame);
+            game.Start();
         }
 
         public void StartGame()
@@ -37,9 +31,8 @@ namespace SpaceInvadersServer
 
         void SendGameInfo(object? obj)
         {
-            battleField.Update();
-            byte[] message;
-            // отправка обновлённых данных клиенту через GameSocket
+            byte[] gameInfo = battleField.Update();
+            socket.SendPacket(gameInfo);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpaceInvadersServer
 {
-    internal class Bullet
+    internal class Bullet : IPackable
     {
         const int _WIDTH = 2;
         const int _HEIGHT = 5;
@@ -25,13 +25,24 @@ namespace SpaceInvadersServer
             this.x = x;
             this.y = y;
             IS_ENEMY = isEnemy;
-            SPEED = isEnemy ? 15 : -15;
+            SPEED = isEnemy ? 7 : -7;
             IsAlive = isAlive;
         }
 
         public void Move()
         {
             x += SPEED;
+        }
+
+        public byte[] GetInfo()
+        {
+            byte[] message = new byte[5];
+            message[0] = (byte)(x >> 8);
+            message[1] = (byte)(x & 0xFF);
+            message[2] = (byte)(y >> 8);
+            message[3] = (byte)(y & 0xFF);
+            message[4] = (byte)SPEED;
+            return message;
         }
     }
 }

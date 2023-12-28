@@ -10,20 +10,22 @@ namespace SpaceInvadersServer
 {
     internal class GameSocket
     {
-        static int FREE_PORT = 8792;
         IPEndPoint endPoint { get; set; }
         Socket socket { get; set; } = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
 
-        public GameSocket(IPAddress ip)
+        public GameSocket(IPAddress ip, int port)
         {
-            endPoint = new IPEndPoint(ip, FREE_PORT++);
+            endPoint = new IPEndPoint(ip, port);
             socket.Bind(endPoint);
         }
 
         public byte[] RecievePacket()
         {
-            throw new NotImplementedException();
+            EndPoint client = endPoint;
+            byte[] buffer = new byte[128];
+            socket.ReceiveFrom(buffer, ref client);
+            PacketOpcode opcode = (PacketOpcode)buffer[0];
         }
 
         public void SendPacket(byte[] packet)
