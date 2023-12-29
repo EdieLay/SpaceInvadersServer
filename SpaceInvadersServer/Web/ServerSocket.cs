@@ -58,6 +58,7 @@ namespace SpaceInvadersServer
                     message[0] = (byte)PacketOpcode.OpenNewSocket;
 
                     IPEndPoint ipEP = new(endPoint.Address, 0);
+                    Console.WriteLine("StartPolling() socket: " + ipEP.ToString());
                     short port = (short)ipEP.Port;
                     message[1] = (byte)(port >> 8);
                     message[2] = (byte)(port & 0xFF);

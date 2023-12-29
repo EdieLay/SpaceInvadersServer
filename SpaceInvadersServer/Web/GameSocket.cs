@@ -10,7 +10,7 @@ namespace SpaceInvadersServer
 {
     internal class GameSocket
     {
-        EndPoint client;
+        EndPoint clientEP;
         IPEndPoint endPoint { get; set; }
         Socket socket { get; set; } = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
@@ -18,11 +18,11 @@ namespace SpaceInvadersServer
         SessionRespondDelegate respondPlayerInput;
 
 
-        public GameSocket(IPEndPoint ipEP, EndPoint client, SessionRespondDelegate respondPlayerInput)
+        public GameSocket(IPEndPoint ipEP, EndPoint _clientEP, SessionRespondDelegate respondPlayerInput)
         {
             endPoint = ipEP;
             socket.Bind(endPoint);
-            this.client = client;
+            this.clientEP = _clientEP;
             this.respondPlayerInput = respondPlayerInput;
 
             Thread receiving = new(StartReceiving);
@@ -40,9 +40,9 @@ namespace SpaceInvadersServer
         void ReceivePacket()
         {
             byte[] buffer = new byte[128];
-            EndPoint clientEP = (EndPoint)endPoint;
             //EndPoint clientEP = new IPEndPoint(IPAddress.Any, 0);
-            Console.WriteLine("ReceivePacket(): " + clientEP.ToString());
+            Console.WriteLine("ReceivePacket() clientEP: " + clientEP.ToString());
+            Console.WriteLine("ReceivePacket() socket: " + socket.LocalEndPoint.ToString());
             socket.ReceiveFrom(buffer, ref clientEP);
             Console.WriteLine("after socket.ReceiveFrom");
             Console.WriteLine(clientEP);
@@ -71,7 +71,7 @@ namespace SpaceInvadersServer
 
         public void SendPacket(byte[] buffer)
         {
-            socket.SendTo(buffer, client);
+            socket.SendTo(buffer, clientEP);
         }
 
         public void ShutdownAndClose()
