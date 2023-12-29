@@ -18,9 +18,9 @@ namespace SpaceInvadersServer
         SessionRespondDelegate respondPlayerInput;
 
 
-        public GameSocket(IPAddress ip, int port, EndPoint client, SessionRespondDelegate respondPlayerInput)
+        public GameSocket(IPEndPoint ipEP, EndPoint client, SessionRespondDelegate respondPlayerInput)
         {
-            endPoint = new IPEndPoint(ip, port);
+            endPoint = ipEP;
             socket.Bind(endPoint);
             this.client = client;
             this.respondPlayerInput = respondPlayerInput;

@@ -20,9 +20,9 @@ namespace SpaceInvadersServer
             // потом - что делает CreatNewSession
         }
 
-        void CreateNewSession(int port, EndPoint client) // открывает новую игровую сессию
+        void CreateNewSession(IPEndPoint ipEP, EndPoint client) // открывает новую игровую сессию
         {
-            sessions.Add(new(ip, port, client, CloseSession));
+            sessions.Add(new(ipEP, client, CloseSession));
         }
 
         void CloseSession(GameSession session)
