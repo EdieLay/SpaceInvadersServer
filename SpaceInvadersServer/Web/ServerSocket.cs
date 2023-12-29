@@ -22,7 +22,7 @@ namespace SpaceInvadersServer
     }
     internal class ServerSocket
     {
-        public delegate void NewSessionDelegate(IPEndPoint ipEP, EndPoint client);
+        public delegate void NewSessionDelegate(Socket gameSck, EndPoint client);
         NewSessionDelegate CreateNewSession; // это будет метод GameServer'а для создания новой сессии
 
         IPEndPoint endPoint { get; set; }
@@ -58,6 +58,8 @@ namespace SpaceInvadersServer
                     message[0] = (byte)PacketOpcode.OpenNewSocket;
 
                     IPEndPoint ipEP = new(endPoint.Address, 0);
+                    Socket gameSocket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                    gameSocket.Bind(ipEP);
                     Console.WriteLine("StartPolling() socket: " + ipEP.ToString());
                     short port = (short)ipEP.Port;
                     message[1] = (byte)(port >> 8);
@@ -72,7 +74,7 @@ namespace SpaceInvadersServer
                     client.Close();
 
                     // поэтому не делаю никаких проверок и сразу создаю новую сессию
-                    CreateNewSession(ipEP, clientEndPoint); // я хз, нужен LocalEndPoint или Remote
+                    CreateNewSession(gameSocket, clientEndPoint); // я хз, нужен LocalEndPoint или Remote
                 }
                 catch (SocketException e)
                 {

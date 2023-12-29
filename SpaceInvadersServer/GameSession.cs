@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,9 +25,9 @@ namespace SpaceInvadersServer
         public delegate void CloseSessionDelegate(GameSession session); // делегат для закрытия этой сесии в GameServer
         CloseSessionDelegate CloseSession;
 
-        public GameSession(IPEndPoint ipEP, EndPoint clientEP, CloseSessionDelegate closeSession)
+        public GameSession(Socket gameSocket, EndPoint clientEP, CloseSessionDelegate closeSession)
         {
-            socket = new GameSocket(ipEP, clientEP, RespondPlayerInput); // передаем в сокет метод, который будет вызываться для реагирования на ввод игрока
+            socket = new GameSocket(gameSocket, clientEP, RespondPlayerInput); // передаем в сокет метод, который будет вызываться для реагирования на ввод игрока
             battleField = new BattleField(SendScore); // передаем в баттлфилд метод, который будет вызываться при обновлении счёта
             CloseSession = closeSession;
             Thread game = new(StartGame);

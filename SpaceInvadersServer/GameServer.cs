@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,9 +21,9 @@ namespace SpaceInvadersServer
             // потом - что делает CreatNewSession
         }
 
-        void CreateNewSession(IPEndPoint ipEP, EndPoint client) // открывает новую игровую сессию
+        void CreateNewSession(Socket gameSocket, EndPoint client) // открывает новую игровую сессию
         {
-            sessions.Add(new(ipEP, client, CloseSession));
+            sessions.Add(new(gameSocket, client, CloseSession));
         }
 
         void CloseSession(GameSession session)

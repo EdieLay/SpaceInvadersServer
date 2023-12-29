@@ -11,17 +11,16 @@ namespace SpaceInvadersServer
     internal class GameSocket
     {
         EndPoint clientEP;
-        IPEndPoint endPoint { get; set; }
-        Socket socket { get; set; } = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        //IPEndPoint endPoint { get; set; }
+        Socket socket { get; set; }
 
         public delegate void SessionRespondDelegate(PlayerInput input);
         SessionRespondDelegate respondPlayerInput;
 
 
-        public GameSocket(IPEndPoint ipEP, EndPoint _clientEP, SessionRespondDelegate respondPlayerInput)
+        public GameSocket(Socket gameSocket, EndPoint _clientEP, SessionRespondDelegate respondPlayerInput)
         {
-            endPoint = ipEP;
-            socket.Bind(endPoint);
+            socket = gameSocket;
             this.clientEP = _clientEP;
             this.respondPlayerInput = respondPlayerInput;
 
