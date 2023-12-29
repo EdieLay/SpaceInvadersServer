@@ -51,10 +51,10 @@ namespace SpaceInvadersServer
                     Socket client = socket.Accept(); // приняли клиента
                     if (socket.LocalEndPoint == null)
                     {
-                        Console.WriteLine("socket.LocalEndPoint == null");
                         continue;
                     }
                     EndPoint clientEndPoint = socket.LocalEndPoint;
+                    Console.WriteLine("StartPolling(): " + clientEndPoint.ToString());
 
                     byte[] message = new byte[3];
                     message[0] = (byte)PacketOpcode.OpenNewSocket;

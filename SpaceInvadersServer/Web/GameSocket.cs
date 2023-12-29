@@ -41,8 +41,10 @@ namespace SpaceInvadersServer
         {
             byte[] buffer = new byte[128];
             EndPoint clientEP = (EndPoint)endPoint;
-            Console.WriteLine("trying..");
+            //EndPoint clientEP = new IPEndPoint(IPAddress.Any, 0);
+            Console.WriteLine("ReceivePacket(): " + clientEP.ToString());
             socket.ReceiveFrom(buffer, ref clientEP);
+            Console.WriteLine("after socket.ReceiveFrom");
             Console.WriteLine(clientEP);
             PacketOpcode opcode = (PacketOpcode)buffer[0];
             switch(opcode)
