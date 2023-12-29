@@ -12,17 +12,19 @@ namespace SpaceInvadersServer
         const int HEIGHT = 15;
         const int SPEED = 10;
 
-        readonly int Y;
+        readonly int _Y;
         readonly int FIELD_WIDTH; // ширина поля
         readonly int FIELD_HEIGHT; // высота поля
 
         int x;
+        public int Center { get { return x + WIDTH / 2; } }
+        public int Y { get { return _Y; } }
 
         public Player(int fieldWidth, int fieldHeight)
         {
             FIELD_WIDTH = fieldWidth; 
             FIELD_HEIGHT = fieldHeight;
-            Y = FIELD_HEIGHT - 2 * HEIGHT;
+            _Y = FIELD_HEIGHT - 2 * HEIGHT;
             x = FIELD_WIDTH / 2 - WIDTH / 2;
         }
 
@@ -42,9 +44,12 @@ namespace SpaceInvadersServer
                 int bulY = enemyBullets[i].Y;
                 int bulHeight = enemyBullets[i].HEIGHT;
                 int bulWidth = enemyBullets[i].WIDTH;
-                if (bulY + bulHeight > Y && bulY < Y + HEIGHT &&
+                if (bulY + bulHeight > _Y && bulY < _Y + HEIGHT &&
                     bulX + bulWidth > x && bulX < x + WIDTH)
+                {
+                    enemyBullets.RemoveAt(i);
                     return true;
+                }
             }
             return false;
         }

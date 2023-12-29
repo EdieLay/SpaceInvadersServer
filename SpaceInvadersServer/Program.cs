@@ -1,2 +1,5 @@
 ﻿
-// инициализация GameServer, что подразумевает сразу его запуск, больше ничего тут не должно быть
+using SpaceInvadersServer;
+using System.Net;
+
+GameServer gameServer = new(IPAddress.Parse("127.0.0.1"));

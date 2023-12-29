@@ -8,6 +8,7 @@ namespace SpaceInvadersServer
 {
     internal class Bullet : IPackable
     {
+        const int FIELD_HEIGHT = 800;
         const int _WIDTH = 2;
         const int _HEIGHT = 5;
         public int WIDTH { get => _WIDTH; }
@@ -31,6 +32,8 @@ namespace SpaceInvadersServer
 
         public void Move()
         {
+            if (x > FIELD_HEIGHT || x + HEIGHT < 0)
+                IsAlive = false;
             x += SPEED;
         }
 

@@ -19,17 +19,14 @@ namespace SpaceInvadersServer
             socket = new ServerSocket(ip, CreateNewSession);
         }
 
-        void Init()
-        {
-            // начинает принимать сообщения в сокет
-            // при получении сообщения создаёт новый GameSession, добавляет в sessions и запускает его
-            // можно сделать другой вид сообщения, чтобы завершать сессию
-            throw new NotImplementedException();
-        }
-
         void CreateNewSession(int port)
         {
-            sessions.Add(new(ip, port));
+            sessions.Add(new(ip, port, CloseSession));
+        }
+
+        void CloseSession(GameSession session)
+        {
+            sessions.Remove(session);
         }
     }
 }
