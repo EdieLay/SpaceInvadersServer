@@ -25,10 +25,10 @@ namespace SpaceInvadersServer
         public delegate void CloseSessionDelegate(GameSession session); // делегат для закрытия этой сесии в GameServer
         CloseSessionDelegate CloseSession;
 
-        public GameSession(Socket gameSocket, EndPoint clientEP, CloseSessionDelegate closeSession)
+        public GameSession(Socket gameSocket, CloseSessionDelegate closeSession)
         {
             Thread.Sleep(500);
-            socket = new GameSocket(gameSocket, clientEP, RespondPlayerInput); // передаем в сокет метод, который будет вызываться для реагирования на ввод игрока
+            socket = new GameSocket(gameSocket, RespondPlayerInput); // передаем в сокет метод, который будет вызываться для реагирования на ввод игрока
             battleField = new BattleField(SendScore); // передаем в баттлфилд метод, который будет вызываться при обновлении счёта
             CloseSession = closeSession;
             Thread game = new(StartGame);

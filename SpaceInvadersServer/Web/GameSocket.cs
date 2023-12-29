@@ -18,10 +18,10 @@ namespace SpaceInvadersServer
         SessionRespondDelegate respondPlayerInput;
 
 
-        public GameSocket(Socket gameSocket, EndPoint _clientEP, SessionRespondDelegate respondPlayerInput)
+        public GameSocket(Socket gameSocket, SessionRespondDelegate respondPlayerInput)
         {
             socket = gameSocket;
-            this.clientEP = _clientEP;
+            clientEP = socket.RemoteEndPoint;
             this.respondPlayerInput = respondPlayerInput;
 
             Thread receiving = new(StartReceiving);
@@ -41,7 +41,7 @@ namespace SpaceInvadersServer
             byte[] buffer = new byte[128];
             Console.WriteLine("ReceivePacket() clientEP: " + clientEP.ToString());
             Console.WriteLine("ReceivePacket() socket: " + socket.LocalEndPoint.ToString());
-            int numberOfBytes = socket.ReceiveFrom(buffer, ref clientEP);
+            int numberOfBytes = socket.Receive(buffer);
             Console.WriteLine("after socket.ReceiveFrom: numberOfBytes = " + numberOfBytes.ToString());
             Console.WriteLine(clientEP);
             PacketOpcode opcode = (PacketOpcode)buffer[0];
@@ -69,7 +69,7 @@ namespace SpaceInvadersServer
 
         public void SendPacket(byte[] buffer)
         {
-            socket.SendTo(buffer, clientEP);
+            socket.Send(buffer);
             Console.WriteLine("GameSocket SendPacket..");
         }
 

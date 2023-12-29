@@ -21,9 +21,9 @@ namespace SpaceInvadersServer
             // потом - что делает CreatNewSession
         }
 
-        void CreateNewSession(Socket gameSocket, EndPoint client) // открывает новую игровую сессию
+        void CreateNewSession(Socket gameSocket) // открывает новую игровую сессию
         {
-            sessions.Add(new(gameSocket, client, CloseSession));
+            sessions.Add(new(gameSocket, CloseSession));
         }
 
         void CloseSession(GameSession session)
