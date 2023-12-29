@@ -49,6 +49,12 @@ namespace SpaceInvadersServer
                 try
                 {
                     Socket client = socket.Accept(); // приняли клиента
+                    if (socket.LocalEndPoint == null)
+                    {
+                        Console.WriteLine("socket.LocalEndPoint == null");
+                        continue;
+                    }
+                    EndPoint clientEndPoint = socket.LocalEndPoint;
 
                     byte[] message = new byte[3];
                     message[0] = (byte)PacketOpcode.OpenNewSocket;
@@ -60,13 +66,14 @@ namespace SpaceInvadersServer
 
                     byte[] buffer = new byte[16];
                     client.Receive(buffer); // в этот момент клиент может отправить только сообщение о начале игры
-                    // поэтому не делаю никаких проверок и сразу создаю новую сессию
-                    CreateNewSession(FREE_PORT, client.RemoteEndPoint); // я хз, нужен LocalEndPoint или Remote
-
-                    FREE_PORT++; // увеличили свободный порт
-
+                    
                     client.Shutdown(SocketShutdown.Both); // закрыли соединение
                     client.Close();
+
+                    // поэтому не делаю никаких проверок и сразу создаю новую сессию
+                    CreateNewSession(FREE_PORT, clientEndPoint); // я хз, нужен LocalEndPoint или Remote
+
+                    FREE_PORT++; // увеличили свободный порт
                 }
                 catch (SocketException e)
                 {

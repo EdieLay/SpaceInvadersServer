@@ -40,7 +40,10 @@ namespace SpaceInvadersServer
         void ReceivePacket()
         {
             byte[] buffer = new byte[128];
-            socket.ReceiveFrom(buffer, ref client);
+            EndPoint clientEP = (EndPoint)endPoint;
+            Console.WriteLine("trying..");
+            socket.ReceiveFrom(buffer, ref clientEP);
+            Console.WriteLine(clientEP);
             PacketOpcode opcode = (PacketOpcode)buffer[0];
             switch(opcode)
             {
