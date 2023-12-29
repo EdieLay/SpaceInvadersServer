@@ -47,11 +47,11 @@ namespace SpaceInvadersServer
                 try
                 {
                     Socket client = socket.Accept(); // приняли клиента
-                    if (socket.LocalEndPoint == null)
+                    if (client.RemoteEndPoint == null)
                     {
                         continue;
                     }
-                    EndPoint clientEndPoint = socket.LocalEndPoint;
+                    EndPoint clientEndPoint = client.RemoteEndPoint;
                     Console.WriteLine("StartPolling(): " + clientEndPoint.ToString());
 
                     byte[] message = new byte[3];
