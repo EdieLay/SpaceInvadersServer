@@ -60,8 +60,8 @@ namespace SpaceInvadersServer
                     IPEndPoint ipEP = new(endPoint.Address, 0);
                     Socket gameSocket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                     gameSocket.Bind(ipEP);
-                    Console.WriteLine("StartPolling() socket: " + ipEP.ToString());
-                    short port = (short)ipEP.Port;
+                    Console.WriteLine("StartPolling() socket: " + gameSocket.LocalEndPoint.ToString());
+                    short port = (short)((IPEndPoint)gameSocket.LocalEndPoint).Port;
                     message[1] = (byte)(port >> 8);
                     message[2] = (byte)(port & 0xFF);
 

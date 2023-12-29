@@ -39,7 +39,6 @@ namespace SpaceInvadersServer
         void ReceivePacket()
         {
             byte[] buffer = new byte[128];
-            //EndPoint clientEP = new IPEndPoint(IPAddress.Any, 0);
             Console.WriteLine("ReceivePacket() clientEP: " + clientEP.ToString());
             Console.WriteLine("ReceivePacket() socket: " + socket.LocalEndPoint.ToString());
             socket.ReceiveFrom(buffer, ref clientEP);
