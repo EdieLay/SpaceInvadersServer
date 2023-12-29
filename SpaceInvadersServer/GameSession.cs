@@ -27,6 +27,7 @@ namespace SpaceInvadersServer
 
         public GameSession(Socket gameSocket, EndPoint clientEP, CloseSessionDelegate closeSession)
         {
+            Thread.Sleep(500);
             socket = new GameSocket(gameSocket, clientEP, RespondPlayerInput); // передаем в сокет метод, который будет вызываться для реагирования на ввод игрока
             battleField = new BattleField(SendScore); // передаем в баттлфилд метод, который будет вызываться при обновлении счёта
             CloseSession = closeSession;
@@ -43,7 +44,9 @@ namespace SpaceInvadersServer
         void SendGameInfo(object? obj)
         {
             byte[] gameInfo = battleField.Update(); // метод обновляет игру и сразу формирует сообщение с инфой об игре
+            Console.WriteLine("Sending Game Info..");
             socket.SendPacket(gameInfo); // отправляем инфу об игре
+            Console.WriteLine("Sent Game Info..");
             if ((byte)PacketOpcode.PlayerDeath == gameInfo[0]) // если мы отправили сообщение о смерти игрока
             {
                 socket.ShutdownAndClose(); // то закрываем сокет
