@@ -41,34 +41,47 @@ namespace SpaceInvadersServer
 
         public byte[] Update() // тут происходит вся логика игры
         {
-            enemies.Move();
+            EnemiesShotRandom(); // рандомно выстрел пацана
+            enemies.Move(); // передвижение пацанов
             for (int i = 0; i < enemyBullets.Count; i++)
             {
-                enemyBullets[i].Move();
-                if (!enemyBullets[i].IsAlive)
+                enemyBullets[i].Move(); // передвижение пуль пацанов
+                if (!enemyBullets[i].IsAlive) // если пуля вышла за пределы поля, то она считается мёртвой
                 {
-                    enemyBullets.RemoveAt(i);
-                    i--;
+                    enemyBullets.RemoveAt(i); // если она стала мёртвой, то убираем её
+                    i--; // т.к. мы убрали пулю, то индекс сдвинулся
                 }
             }
-            if (playerBullet.IsAlive) playerBullet.Move();
-            UpdatePlayer();
+            if (playerBullet.IsAlive) playerBullet.Move(); // если пуля игрока жива, то двигаем её
+            UpdatePlayer(); // обновляем положение игрока в соответствии с текущим ввод игрока
             int prevScore = score;
             score += enemies.CalculateBulletCollision(playerBullet);
-            if (score != prevScore) 
+            if (score != prevScore) // если новый счёт не равен предыдущему, то отправляем новый счёт
             {
                 SendScore(score);
             }
-            if (player.CalculateBulletsCollision(enemyBullets))
+
+            // если игрок столкнулся с пулей или пацаном, то игра закончена
+            if (player.CalculateBulletsCollision(enemyBullets) || player.CalculateEnemyCollision(enemies.DownBorder)) 
             {
                 byte[] gameOver = new byte[1];
                 gameOver[0] = (byte)PacketOpcode.PlayerDeath;
-                return gameOver;
+                return gameOver; // возвращаем пакет о конце игры
             }
-            return GetInfo();
+            return GetInfo(); // возвращаем инфу о игре
         }
 
-        public void PlayerShot()
+        void EnemiesShotRandom()
+        {
+            var rand = new Random();
+            if (rand.NextDouble() < 0.05)
+            {
+                (int, int) enemy = enemies.GetRandomFrontRowCoordinates();
+                enemyBullets.Add(new(enemy.Item1, enemy.Item2, true));
+            }
+        }
+
+        public void PlayerShot() // игрок может выстрелить только, если пуля не жива
         {
             if (!playerBullet.IsAlive)
                 playerBullet = new Bullet(player.Center, player.Y, false);
@@ -89,7 +102,7 @@ namespace SpaceInvadersServer
             }
         }
 
-        public byte[] GetInfo()
+        public byte[] GetInfo() // простов формирование пакета
         {
             int playerBulletAlive = playerBullet.IsAlive ? 5 : 0;
             byte[] message = new byte[1 + 2 + 2 + 2 + 2 + 2 + 7 + 1 + playerBulletAlive + enemyBullets.Count * 5];

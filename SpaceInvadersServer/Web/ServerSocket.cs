@@ -24,20 +24,20 @@ namespace SpaceInvadersServer
     {
         static int FREE_PORT = 8792;
 
-        public delegate void NewSessionHandler(int port);
-        NewSessionHandler CreateNewSession;
+        public delegate void NewSessionDelegate(int port, EndPoint client);
+        NewSessionDelegate CreateNewSession; // это будет метод GameServer'а для создания новой сессии
 
         IPEndPoint endPoint { get; set; }
         Socket socket { get; set; } = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 
-        public ServerSocket(IPAddress ip, NewSessionHandler create)
+        public ServerSocket(IPAddress ip, NewSessionDelegate create)
         {
             endPoint = new IPEndPoint(ip, 8791);
             socket.Bind(endPoint);
-            CreateNewSession = create;
+            CreateNewSession = create; // получаем метод геймсервера в делегат
             Thread listenThread = new(StartPolling);
-            listenThread.Start();
+            listenThread.Start(); // начинаем принимать клиентов в новом потоке
         }
 
         void StartPolling()
@@ -48,9 +48,7 @@ namespace SpaceInvadersServer
             {
                 try
                 {
-                    Socket client = socket.Accept();
-
-                    CreateNewSession(FREE_PORT);
+                    Socket client = socket.Accept(); // приняли клиента
 
                     byte[] message = new byte[3];
                     message[0] = (byte)PacketOpcode.OpenNewSocket;
@@ -58,28 +56,23 @@ namespace SpaceInvadersServer
                     message[1] = (byte)(port >> 8);
                     message[2] = (byte)(port & 0xFF);
 
-                    client.Send(message);
+                    client.Send(message); // отправили сообщение с новым портом
 
-                    FREE_PORT++;
+                    byte[] buffer = new byte[16];
+                    client.Receive(buffer); // в этот момент клиент может отправить только сообщение о начале игры
+                    // поэтому не делаю никаких проверок и сразу создаю новую сессию
+                    CreateNewSession(FREE_PORT, client.RemoteEndPoint); // я хз, нужен LocalEndPoint или Remote
 
-                    client.Shutdown(SocketShutdown.Both);
+                    FREE_PORT++; // увеличили свободный порт
+
+                    client.Shutdown(SocketShutdown.Both); // закрыли соединение
                     client.Close();
                 }
-                catch (SocketException)
+                catch (SocketException e)
                 {
-
+                    Console.WriteLine($"SocketException: {e.Message}");
                 }
             }
-        }
-
-        public byte[] RecievePacket()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SendPacket(byte[] packet)
-        {
-            throw new NotImplementedException();
         }
     }
 }

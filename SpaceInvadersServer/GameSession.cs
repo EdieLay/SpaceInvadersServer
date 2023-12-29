@@ -19,38 +19,38 @@ namespace SpaceInvadersServer
     {
         const int TIMER_INTERVAL_MS = 30;
         GameSocket socket; // сокет для отправки и получения игровых данных
-        BattleField battleField;
+        BattleField battleField; // игровое поле с врагами, игроком и пулями
 
-        public delegate void CloseSessionDelegate(GameSession session);
+        public delegate void CloseSessionDelegate(GameSession session); // делегат для закрытия этой сесии в GameServer
         CloseSessionDelegate CloseSession;
 
-        public GameSession(IPAddress ip, int port, CloseSessionDelegate closeSession)
+        public GameSession(IPAddress ip, int port, EndPoint client, CloseSessionDelegate closeSession)
         {
-            socket = new GameSocket(ip, port, RespondPlayerInput);
-            battleField = new BattleField(SendScore);
+            socket = new GameSocket(ip, port, client, RespondPlayerInput); // передаем в сокет метод, который будет вызываться для реагирования на ввод игрока
+            battleField = new BattleField(SendScore); // передаем в баттлфилд метод, который будет вызываться при обновлении счёта
             CloseSession = closeSession;
             Thread game = new(StartGame);
-            game.Start();
+            game.Start(); // начинаем игру в новом потоке
         }
 
         public void StartGame()
         {
-            TimerCallback timerCallback = new(SendGameInfo);
+            TimerCallback timerCallback = new(SendGameInfo); // вызываем SendGameInfo по тику таймера
             Timer timer = new(timerCallback, null, 0, TIMER_INTERVAL_MS);
         }
 
         void SendGameInfo(object? obj)
         {
-            byte[] gameInfo = battleField.Update();
-            socket.SendPacket(gameInfo);
-            if ((byte)PacketOpcode.PlayerDeath == gameInfo[0])
+            byte[] gameInfo = battleField.Update(); // метод обновляет игру и сразу формирует сообщение с инфой об игре
+            socket.SendPacket(gameInfo); // отправляем инфу об игре
+            if ((byte)PacketOpcode.PlayerDeath == gameInfo[0]) // если мы отправили сообщение о смерти игрока
             {
-                socket.ShutdownAndClose();
-                CloseSession(this);
+                socket.ShutdownAndClose(); // то закрываем сокет
+                CloseSession(this); // и закрываем сессию
             }
         }
 
-        void SendScore(int score)
+        void SendScore(int score) // метод для отправки счёта
         {
             byte[] buffer = new byte[5];
             buffer[0] = (byte)PacketOpcode.NewScore;
@@ -61,25 +61,27 @@ namespace SpaceInvadersServer
             socket.SendPacket(buffer);
         }
 
-        void RespondPlayerInput(PlayerInput input)
+        void RespondPlayerInput(PlayerInput input) // ответ на ввод игрока
         {
             switch (input)
             {
-                case PlayerInput.RightKeyDown:
-                    battleField.playerMovement = PlayerMovement.ToRight;
+                case PlayerInput.RightKeyDown: // если нажал "вправо"
+                    battleField.playerMovement = PlayerMovement.ToRight; // то идём вправо
                     break;
-                case PlayerInput.RightKeyUp:
+                case PlayerInput.RightKeyUp: // если отпустил "вправо", то сначала проверяем, не шёл ли он влево
                     if (PlayerMovement.ToRight == battleField.playerMovement)
-                        battleField.playerMovement = PlayerMovement.Idle;
+                        battleField.playerMovement = PlayerMovement.Idle; // если он не шёл влево, то останавливаем
+                    // эта логика нужна, если я нажму вправо, а потом, не отжимая, нажму влево
                     break;
-                case PlayerInput.LeftKeyDown:
+                case PlayerInput.LeftKeyDown: // то же самое, что и с "вправо"
                     battleField.playerMovement = PlayerMovement.ToLeft;
                     break;
                 case PlayerInput.LeftKeyUp:
                     if (PlayerMovement.ToLeft == battleField.playerMovement)
                         battleField.playerMovement = PlayerMovement.Idle;
                     break;
-                case PlayerInput.Shot:
+                case PlayerInput.Shot: // выстрел игрока
+                    battleField.PlayerShot();
                     break;
                 default:
                     break;

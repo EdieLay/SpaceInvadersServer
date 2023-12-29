@@ -34,6 +34,8 @@ namespace SpaceInvadersServer
         int leftBorder; // координата x левой границы
         int rightBorder; // координата x правой границы
 
+        public int DownBorder { get { return downBorder; } }
+
         int wave; // текущая волна
 
         public Enemies(int fieldWidth, int fieldHeight)
@@ -101,17 +103,18 @@ namespace SpaceInvadersServer
                     if (x > bulX + bulWidth || x + WIDTH < bulX ||
                         y > bulY + bulHeight || y + HEIGHT < bulY)
                         continue;
-                    enemies[i * COLS + j] = false;
-                    enemiesAlive--;
-                    bullet.IsAlive = false;
-                    GetBorders();
-                    CalculateSpeed();
-                    if (enemiesAlive == 0)
+                    // если пуля попала в пацна
+                    enemies[i * COLS + j] = false; // убиваем пацана
+                    enemiesAlive--; // уменьшаем кол-во пацанлв
+                    bullet.IsAlive = false; // пля тоже теперь не жива
+                    GetBorders(); // обновляем рамки пацанов
+                    CalculateSpeed(); // обновляем скорость пацанов
+                    if (enemiesAlive == 0) // если пацанов нет, то обновляем пацанов
                     {
                         StartNewWave();
                         return wave - 1;
                     }
-                    return wave;
+                    return wave; // возвращаем текущую волну, как награду за попадание
                 }
             }
             return 0;
@@ -171,14 +174,28 @@ namespace SpaceInvadersServer
             rightBorder = rightBorderNum * (WIDTH + GAP_X) + WIDTH;
         }
 
-        void StartNewWave()
+        public (int, int) GetRandomFrontRowCoordinates() // возвращает координаты рандомного пацана, перед которым никого нет
         {
-            enemiesAlive = ROWS * COLS;
-            Array.Fill(enemies, true);
-            offsetX = 0;
+            var rand = new Random();
+            while (true)
+            {
+                int col = rand.Next(leftBorderNum, rightBorderNum + 1);
+                for (int i = downBorderNum; i >= upBorderNum; i--)
+                {
+                    if (enemies[i * COLS + col])
+                        return (col * (WIDTH + GAP_X) + WIDTH / 2, i * (HEIGHT + GAP_Y) + HEIGHT);
+                }
+            }
+        }
+
+        void StartNewWave() // новая волна
+        {
+            enemiesAlive = ROWS * COLS; // все пацаны теперь живы
+            Array.Fill(enemies, true); // заполняем живыми пацанами массив
+            offsetX = 0; // ресетим оффсеты пацанов
             offsetY = 0;
-            CalculateSpeed(); 
-            downBorderNum = ROWS - 1;
+            CalculateSpeed(); // обновляем скорость пацанов
+            downBorderNum = ROWS - 1; // обновляем рамки пацанов
             upBorderNum = 0;
             leftBorderNum = 0;
             rightBorderNum = COLS - 1;
@@ -186,7 +203,7 @@ namespace SpaceInvadersServer
             upBorder = 0;
             leftBorder = 0;
             rightBorder = COLS * WIDTH + (COLS - 1) * GAP_X;
-            wave++;
+            wave++; // увеличиваем счётчик волны
         }
 
         public byte[] GetInfo()

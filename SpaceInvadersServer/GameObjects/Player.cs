@@ -54,6 +54,14 @@ namespace SpaceInvadersServer
             return false;
         }
 
+        // пока что столкновение с пацанами реализовано просто, как заход на один игрек с игроком
+        public bool CalculateEnemyCollision(int downBorder)
+        {
+            if (downBorder > _Y)
+                return true;
+            return false;
+        }
+
         public byte[] GetInfo()
         {
             byte[] message = new byte[2];

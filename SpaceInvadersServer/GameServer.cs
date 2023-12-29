@@ -16,12 +16,13 @@ namespace SpaceInvadersServer
         public GameServer(IPAddress ip)
         {
             this.ip = ip;
-            socket = new ServerSocket(ip, CreateNewSession);
+            socket = new ServerSocket(ip, CreateNewSession); // сначала посмотри конструктор ServerSocket
+            // потом - что делает CreatNewSession
         }
 
-        void CreateNewSession(int port)
+        void CreateNewSession(int port, EndPoint client) // открывает новую игровую сессию
         {
-            sessions.Add(new(ip, port, CloseSession));
+            sessions.Add(new(ip, port, client, CloseSession));
         }
 
         void CloseSession(GameSession session)

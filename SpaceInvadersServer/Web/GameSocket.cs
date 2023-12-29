@@ -18,15 +18,13 @@ namespace SpaceInvadersServer
         SessionRespondDelegate respondPlayerInput;
 
 
-        public GameSocket(IPAddress ip, int port, SessionRespondDelegate respondPlayerInput)
+        public GameSocket(IPAddress ip, int port, EndPoint client, SessionRespondDelegate respondPlayerInput)
         {
             endPoint = new IPEndPoint(ip, port);
             socket.Bind(endPoint);
-            client = endPoint;
-            byte[] buffer = new byte[32];
-            socket.ReceiveFrom(buffer, ref client);
-            socket.Connect(client); // возможно, из-за этого будут проблемы с UDP
+            this.client = client;
             this.respondPlayerInput = respondPlayerInput;
+
             Thread receiving = new(StartReceiving);
             receiving.Start();
         }
