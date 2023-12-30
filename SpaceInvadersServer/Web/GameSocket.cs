@@ -32,7 +32,20 @@ namespace SpaceInvadersServer
         {
             while (true)
             {
-                ReceivePacket();
+                try
+                {
+                    ReceivePacket();
+                }
+                catch (SocketException)
+                {
+                    Console.WriteLine("Catch: ReceivePacket -> Socket");
+                    break;
+                }
+                catch (ObjectDisposedException)
+                {
+                    Console.WriteLine("Catch: ReceivePacket -> ObjectDisposed");
+                    break;
+                }
             }
         }
 
@@ -45,12 +58,12 @@ namespace SpaceInvadersServer
             //Console.WriteLine("after socket.ReceiveFrom: numberOfBytes = " + numberOfBytes.ToString());
             //Console.WriteLine(clientEP);
             PacketOpcode opcode = (PacketOpcode)buffer[0];
-            switch(opcode)
+            switch (opcode)
             {
                 case PacketOpcode.KeyDown:
                     if (0 == buffer[1])
                         respondPlayerInput(PlayerInput.LeftKeyDown);
-                    else 
+                    else
                         respondPlayerInput(PlayerInput.RightKeyDown);
                     break;
                 case PacketOpcode.KeyUp:

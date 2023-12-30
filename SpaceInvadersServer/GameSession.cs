@@ -21,6 +21,7 @@ namespace SpaceInvadersServer
         const int TIMER_INTERVAL_MS = 30;
         GameSocket socket; // сокет для отправки и получения игровых данных
         BattleField battleField; // игровое поле с врагами, игроком и пулями
+        Timer timer;
 
         public delegate void CloseSessionDelegate(GameSession session); // делегат для закрытия этой сесии в GameServer
         CloseSessionDelegate CloseSession;
@@ -38,7 +39,7 @@ namespace SpaceInvadersServer
         public void StartGame()
         {
             TimerCallback timerCallback = new(SendGameInfo); // вызываем SendGameInfo по тику таймера
-            Timer timer = new(timerCallback, null, 0, TIMER_INTERVAL_MS);
+            timer = new(timerCallback, null, 0, TIMER_INTERVAL_MS);
         }
 
         void SendGameInfo(object? obj)
@@ -49,6 +50,7 @@ namespace SpaceInvadersServer
             //Console.WriteLine("Sent Game Info..");
             if ((byte)PacketOpcode.PlayerDeath == gameInfo[0]) // если мы отправили сообщение о смерти игрока
             {
+                timer.Dispose();
                 socket.ShutdownAndClose(); // то закрываем сокет
                 CloseSession(this); // и закрываем сессию
             }

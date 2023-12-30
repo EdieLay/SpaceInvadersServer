@@ -228,7 +228,6 @@ namespace SpaceInvadersServer
                         if (enemies[8 * i + j])
                             alive |= 0b_0000_0001;
                 }
-                Console.WriteLine(alive);
                 message[6 + i] = alive;
             }
             return message;
