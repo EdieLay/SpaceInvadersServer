@@ -51,7 +51,7 @@ namespace SpaceInvadersServer
 
         void ReceivePacket()
         {
-            byte[] buffer = new byte[128];
+            byte[] buffer = new byte[16];
             //Console.WriteLine("ReceivePacket() clientEP: " + clientEP.ToString());
             //Console.WriteLine("ReceivePacket() socket: " + socket.LocalEndPoint.ToString());
             int numberOfBytes = socket.Receive(buffer);
@@ -61,12 +61,26 @@ namespace SpaceInvadersServer
             switch (opcode)
             {
                 case PacketOpcode.KeyDown:
+                    while (numberOfBytes < 2)
+                    {
+                        byte[] buf2 = new byte[16];
+                        int num2 = socket.Receive(buf2);
+                        buf2.CopyTo(buffer, numberOfBytes);
+                        numberOfBytes += num2;
+                    }
                     if (0 == buffer[1])
                         respondPlayerInput(PlayerInput.LeftKeyDown);
                     else
                         respondPlayerInput(PlayerInput.RightKeyDown);
                     break;
                 case PacketOpcode.KeyUp:
+                    while (numberOfBytes < 2)
+                    {
+                        byte[] buf2 = new byte[16];
+                        int num2 = socket.Receive(buf2);
+                        buf2.CopyTo(buffer, numberOfBytes);
+                        numberOfBytes += num2;
+                    }
                     if (0 == buffer[1])
                         respondPlayerInput(PlayerInput.LeftKeyUp);
                     else
