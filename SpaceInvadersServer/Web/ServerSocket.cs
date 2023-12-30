@@ -23,6 +23,7 @@ namespace SpaceInvadersServer
     {
         public delegate void NewSessionDelegate(Socket gameSck);
         NewSessionDelegate CreateNewSession; // это будет метод GameServer'а для создания новой сессии
+        public List<Socket> clientSockets { get; set; } = new List<Socket>();
 
         IPEndPoint endPoint { get; set; }
         Socket socket { get; set; } = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -50,6 +51,7 @@ namespace SpaceInvadersServer
                     {
                         continue;
                     }
+                    clientSockets.Add(client);
                     EndPoint clientEndPoint = client.RemoteEndPoint;
                     Console.WriteLine("StartPolling(): " + clientEndPoint.ToString());
 

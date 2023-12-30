@@ -28,7 +28,9 @@ namespace SpaceInvadersServer
 
         void CloseSession(GameSession session)
         {
-            sessions.Remove(session);
+            int ind = sessions.IndexOf(session);
+            sessions.RemoveAt(ind);
+            socket.clientSockets.RemoveAt(ind);
         }
     }
 }
