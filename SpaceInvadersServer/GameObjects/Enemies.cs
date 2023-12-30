@@ -72,7 +72,7 @@ namespace SpaceInvadersServer
                 offsetX = 0 - WIDTH * leftBorderNum - GAP_X * leftBorderNum;
                 speed *= -1;
             }
-            Console.WriteLine($"{leftBorder} {offsetX} {downBorder + offsetY}");
+            //Console.WriteLine($"{leftBorder} {offsetX} {downBorder + offsetY}");
         }
 
         void CalculateSpeed()
@@ -106,6 +106,7 @@ namespace SpaceInvadersServer
                         y > bulY + bulHeight || y + HEIGHT < bulY)
                         continue;
                     // если пуля попала в пацна
+                    Console.WriteLine($"Killed {i * COLS + j}");
                     enemies[i * COLS + j] = false; // убиваем пацана
                     enemiesAlive--; // уменьшаем кол-во пацанлв
                     bullet.IsAlive = false; // пля тоже теперь не жива
@@ -222,11 +223,12 @@ namespace SpaceInvadersServer
                 byte alive = 0;
                 for (int j = 0; j < 8; j++)
                 {
+                    alive = (byte)(alive << 1);
                     if (8 * i + j < ROWS * COLS)
                         if (enemies[8 * i + j])
                             alive |= 0b_0000_0001;
-                    alive = (byte)(alive << 1);
                 }
+                Console.WriteLine(alive);
                 message[6 + i] = alive;
             }
             return message;
