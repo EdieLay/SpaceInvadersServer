@@ -45,6 +45,7 @@ namespace SpaceInvadersServer
             Array.Fill(enemies, true);
             offsetX = 0;
             offsetY = 0;
+            speed = 1;
             CalculateSpeed();
             FIELD_WIDTH = fieldWidth;
             FIELD_HEIGHT = fieldHeight;
@@ -59,25 +60,26 @@ namespace SpaceInvadersServer
         public void Move()
         {
             offsetX += speed;
-            if (offsetX + WIDTH * COLS + GAP_X * (COLS - 1) >= FIELD_WIDTH)
+            if (rightBorder + offsetX >= FIELD_WIDTH)
             {
                 offsetY += HEIGHT;
-                offsetX = FIELD_WIDTH - WIDTH * COLS + GAP_X * (COLS - 1);
+                offsetX = FIELD_WIDTH - WIDTH * (rightBorderNum + 1) - GAP_X * rightBorderNum;
                 speed *= -1;
             }
-            else if (offsetX < 0)
+            else if (leftBorder + offsetX < 0)
             {
-                offsetY++;
-                offsetX = 0;
+                offsetY += HEIGHT;
+                offsetX = 0 - WIDTH * leftBorderNum - GAP_X * leftBorderNum;
                 speed *= -1;
             }
+            Console.WriteLine($"{leftBorder} {offsetX} {downBorder + offsetY}");
         }
 
         void CalculateSpeed()
         {
             // enemiesAlive = 55 => speed = 4
             // enemiesAlive = 1  => speed = 36
-            speed = (int)((243.0 + (wave - 1.0) * 10) / (enemiesAlive + 5.75)) / 2;
+            speed = Math.Sign(speed) * (int)((243.0 + (wave - 1.0) * 10) / (enemiesAlive + 5.75)) / 2;
         }
 
         public int CalculateBulletCollision(Bullet bullet)
@@ -88,8 +90,8 @@ namespace SpaceInvadersServer
             int bulY = bullet.Y;
             int bulWidth = bullet.WIDTH;
             int bulHeight = bullet.HEIGHT;
-            if (bulY > downBorder || bulY + bulHeight < upBorder ||
-                bulX + bulWidth < leftBorder || bulX > rightBorder)
+            if (bulY > downBorder + offsetY || bulY + bulHeight < upBorder + offsetY ||
+                bulX + bulWidth < leftBorder + offsetX || bulX > rightBorder + offsetX)
                 return 0;
 
             int x, y;
@@ -98,8 +100,8 @@ namespace SpaceInvadersServer
                 for (int j = leftBorderNum; j <= rightBorderNum; j++)
                 {
                     if (!enemies[i * COLS + j]) continue;
-                    x = j * (WIDTH + GAP_X);
-                    y = i * (HEIGHT + GAP_Y);
+                    x = j * (WIDTH + GAP_X) + offsetX;
+                    y = i * (HEIGHT + GAP_Y) + offsetY;
                     if (x > bulX + bulWidth || x + WIDTH < bulX ||
                         y > bulY + bulHeight || y + HEIGHT < bulY)
                         continue;
@@ -183,7 +185,7 @@ namespace SpaceInvadersServer
                 for (int i = downBorderNum; i >= upBorderNum; i--)
                 {
                     if (enemies[i * COLS + col])
-                        return (col * (WIDTH + GAP_X) + WIDTH / 2, i * (HEIGHT + GAP_Y) + HEIGHT);
+                        return (col * (WIDTH + GAP_X) + WIDTH / 2 + offsetX, i * (HEIGHT + GAP_Y) + HEIGHT + offsetY);
                 }
             }
         }

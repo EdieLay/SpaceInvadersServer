@@ -44,9 +44,9 @@ namespace SpaceInvadersServer
         void SendGameInfo(object? obj)
         {
             byte[] gameInfo = battleField.Update(); // метод обновляет игру и сразу формирует сообщение с инфой об игре
-            Console.WriteLine("Sending Game Info..");
+            //Console.WriteLine("Sending Game Info..");
             socket.SendPacket(gameInfo); // отправляем инфу об игре
-            Console.WriteLine("Sent Game Info..");
+            //Console.WriteLine("Sent Game Info..");
             if ((byte)PacketOpcode.PlayerDeath == gameInfo[0]) // если мы отправили сообщение о смерти игрока
             {
                 socket.ShutdownAndClose(); // то закрываем сокет

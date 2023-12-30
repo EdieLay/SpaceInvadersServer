@@ -32,9 +32,9 @@ namespace SpaceInvadersServer
 
         public void Move()
         {
-            if (x > FIELD_HEIGHT || x + HEIGHT < 0)
+            if (y > FIELD_HEIGHT || y + HEIGHT < 0)
                 IsAlive = false;
-            x += SPEED;
+            y += SPEED;
         }
 
         public byte[] GetInfo()

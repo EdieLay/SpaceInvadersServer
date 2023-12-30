@@ -39,11 +39,11 @@ namespace SpaceInvadersServer
         void ReceivePacket()
         {
             byte[] buffer = new byte[128];
-            Console.WriteLine("ReceivePacket() clientEP: " + clientEP.ToString());
-            Console.WriteLine("ReceivePacket() socket: " + socket.LocalEndPoint.ToString());
+            //Console.WriteLine("ReceivePacket() clientEP: " + clientEP.ToString());
+            //Console.WriteLine("ReceivePacket() socket: " + socket.LocalEndPoint.ToString());
             int numberOfBytes = socket.Receive(buffer);
-            Console.WriteLine("after socket.ReceiveFrom: numberOfBytes = " + numberOfBytes.ToString());
-            Console.WriteLine(clientEP);
+            //Console.WriteLine("after socket.ReceiveFrom: numberOfBytes = " + numberOfBytes.ToString());
+            //Console.WriteLine(clientEP);
             PacketOpcode opcode = (PacketOpcode)buffer[0];
             switch(opcode)
             {
@@ -70,7 +70,7 @@ namespace SpaceInvadersServer
         public void SendPacket(byte[] buffer)
         {
             socket.Send(buffer);
-            Console.WriteLine("GameSocket SendPacket..");
+            //Console.WriteLine("GameSocket SendPacket..");
         }
 
         public void ShutdownAndClose()

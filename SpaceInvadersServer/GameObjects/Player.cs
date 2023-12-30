@@ -24,7 +24,7 @@ namespace SpaceInvadersServer
         {
             FIELD_WIDTH = fieldWidth; 
             FIELD_HEIGHT = fieldHeight;
-            _Y = FIELD_HEIGHT - 2 * HEIGHT;
+            _Y = FIELD_HEIGHT - 4 * HEIGHT;
             x = FIELD_WIDTH / 2 - WIDTH / 2;
         }
 

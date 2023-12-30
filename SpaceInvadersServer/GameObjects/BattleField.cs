@@ -74,7 +74,7 @@ namespace SpaceInvadersServer
         void EnemiesShotRandom()
         {
             var rand = new Random();
-            if (rand.NextDouble() < 0.05)
+            if (rand.NextDouble() < 0.01)
             {
                 (int, int) enemy = enemies.GetRandomFrontRowCoordinates();
                 enemyBullets.Add(new(enemy.Item1, enemy.Item2, true));
