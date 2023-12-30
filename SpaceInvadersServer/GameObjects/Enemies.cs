@@ -10,9 +10,9 @@ namespace SpaceInvadersServer
     {
         const int ROWS = 5; // количество строк пацанов
         const int COLS = 11; // количество столбцов пацанов
-        const int WIDTH = 20; // ширина пацана
-        const int HEIGHT = 15; // высота пацана
-        const int GAP_X = 3; // расстояние от правого конца пацана до следующего пацана
+        const int WIDTH = 30; // ширина пацана
+        const int HEIGHT = 20; // высота пацана
+        const int GAP_X = 7; // расстояние от правого конца пацана до следующего пацана
         const int GAP_Y = HEIGHT; // расстояние от нижнего конйа пацана до следующего пацана
 
         readonly int FIELD_WIDTH; // ширина поля
@@ -22,6 +22,8 @@ namespace SpaceInvadersServer
         int enemiesAlive;
         int offsetX; // смещение левого верхнего угла каждого пацана относительно его начальной позиции по икс
         int offsetY; // смещение левого верхнего угла каждого пацана относительно его начальной позиции по игрек
+        public int OffsetY { get => offsetY; }
+
         int speed; // скорость пацанов по икс за тик таймера
 
         int downBorderNum; // номер нижней границы пацанов
@@ -79,7 +81,8 @@ namespace SpaceInvadersServer
         {
             // enemiesAlive = 55 => speed = 4
             // enemiesAlive = 1  => speed = 36
-            speed = Math.Sign(speed) * (int)((243.0 + (wave - 1.0) * 10) / (enemiesAlive + 5.75)) / 2;
+            // 243 в числителе было
+            speed = Math.Sign(speed) * (int)((160.0 + (wave - 1.0) * 10) / (enemiesAlive + 5.75)) / 2;
         }
 
         public int CalculateBulletCollision(Bullet bullet)

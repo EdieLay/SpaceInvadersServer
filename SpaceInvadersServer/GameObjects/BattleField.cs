@@ -62,7 +62,7 @@ namespace SpaceInvadersServer
             }
 
             // если игрок столкнулся с пулей или пацаном, то игра закончена
-            if (player.CalculateBulletsCollision(enemyBullets) || player.CalculateEnemyCollision(enemies.DownBorder)) 
+            if (player.CalculateBulletsCollision(enemyBullets) || player.CalculateEnemyCollision(enemies.DownBorder + enemies.OffsetY)) 
             {
                 byte[] gameOver = new byte[1];
                 gameOver[0] = (byte)PacketOpcode.PlayerDeath;

@@ -8,8 +8,8 @@ namespace SpaceInvadersServer
 {
     internal class Player : IPackable
     {
-        const int WIDTH = 20;
-        const int HEIGHT = 15;
+        const int WIDTH = 60;
+        const int HEIGHT = 45;
         const int SPEED = 10;
 
         readonly int _Y;
@@ -24,7 +24,7 @@ namespace SpaceInvadersServer
         {
             FIELD_WIDTH = fieldWidth; 
             FIELD_HEIGHT = fieldHeight;
-            _Y = FIELD_HEIGHT - 4 * HEIGHT;
+            _Y = FIELD_HEIGHT - 2 * HEIGHT;
             x = FIELD_WIDTH / 2 - WIDTH / 2;
         }
 
@@ -55,9 +55,9 @@ namespace SpaceInvadersServer
         }
 
         // пока что столкновение с пацанами реализовано просто, как заход на один игрек с игроком
-        public bool CalculateEnemyCollision(int downBorder)
+        public bool CalculateEnemyCollision(int downBorderWithOffset)
         {
-            if (downBorder > _Y)
+            if (downBorderWithOffset > _Y)
                 return true;
             return false;
         }

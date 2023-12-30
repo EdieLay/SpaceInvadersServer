@@ -9,8 +9,8 @@ namespace SpaceInvadersServer
     internal class Bullet : IPackable
     {
         const int FIELD_HEIGHT = 800;
-        const int _WIDTH = 2;
-        const int _HEIGHT = 5;
+        const int _WIDTH = 6;
+        const int _HEIGHT = 15;
         public int WIDTH { get => _WIDTH; }
         public int HEIGHT { get => _HEIGHT; }
         readonly int SPEED;
@@ -26,7 +26,7 @@ namespace SpaceInvadersServer
             this.x = x;
             this.y = y;
             IS_ENEMY = isEnemy;
-            SPEED = isEnemy ? 7 : -7;
+            SPEED = isEnemy ? 10 : -18;
             IsAlive = isAlive;
         }
 
